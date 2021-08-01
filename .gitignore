@@ -1,5 +1,5 @@
 __pycache__/
 .venv/
 .venvsource
-bot_token.py
+bot_secrets.py
 Log.log

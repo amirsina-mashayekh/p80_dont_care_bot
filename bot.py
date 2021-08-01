@@ -1,8 +1,7 @@
 #!/usr/bin/python3
-#Create module "bot_tokey" and put token of your bot in a variable named "token" 
-import bot_token, handlers
-from menuLevels import MenuLevels
+# Create module "bot_secrets" and put token of your bot in a variable named "token"
 import logging
+
 from telegram.ext import (
     Updater,
     CommandHandler,
@@ -11,23 +10,28 @@ from telegram.ext import (
     ConversationHandler
 )
 
+import bot_secrets
+import handlers
+from menuLevels import MenuLevels
+
 logging.basicConfig(
     filename="Log.log", level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
-def main() -> None:
-    "Main code"
 
-    updater = Updater(token=bot_token.token)
+def main() -> None:
+    """Main code"""
+
+    updater = Updater(token=bot_secrets.token)
     dispatcher = updater.dispatcher
 
     add_conv_handler = ConversationHandler(
         entry_points=[CommandHandler(command='add', callback=handlers.add)],
         states={
-            MenuLevels.GET_USER: [MessageHandler(filters=Filters.reply, callback=handlers.addDC)],
-            MenuLevels.GET_METHOD: [MessageHandler(filters=Filters.reply, callback=handlers.dcMode)],
-            MenuLevels.GET_METHOD_OPTION: [MessageHandler(filters=Filters.reply, callback=handlers.dcModeOption)],
+            MenuLevels.GET_USER: [MessageHandler(filters=Filters.reply, callback=handlers.add_dc)],
+            MenuLevels.GET_METHOD: [MessageHandler(filters=Filters.reply, callback=handlers.dc_mode)],
+            MenuLevels.GET_METHOD_OPTION: [MessageHandler(filters=Filters.reply, callback=handlers.dc_mode_option)],
         },
         fallbacks=[
             CommandHandler(command='cancel', callback=handlers.cancel),
@@ -38,7 +42,7 @@ def main() -> None:
     rem_conv_handler = ConversationHandler(
         entry_points=[CommandHandler(command='remove', callback=handlers.remove)],
         states={
-            MenuLevels.GET_USER: [MessageHandler(filters=Filters.reply, callback=handlers.removeDC)]
+            MenuLevels.GET_USER: [MessageHandler(filters=Filters.reply, callback=handlers.remove_dc)]
         },
         fallbacks=[CommandHandler(command='cancel', callback=handlers.cancel)]
     )
@@ -49,6 +53,7 @@ def main() -> None:
 
     updater.start_polling()
     updater.idle()
+
 
 if __name__ == '__main__':
     main()
