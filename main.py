@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 # Create module "bot_secrets" and put token of your bot in a variable named "token"
 import logging
+import os
 
+import telegram
 from telegram.ext import (
     Updater,
     CommandHandler,
@@ -10,7 +12,7 @@ from telegram.ext import (
     ConversationHandler
 )
 
-import bot_secrets
+import data
 import handlers
 from menuLevels import MenuLevels
 
@@ -23,7 +25,10 @@ logging.basicConfig(
 def main() -> None:
     """Main code"""
 
-    updater = Updater(token=bot_secrets.token)
+    data.connect()
+    data.create_tables()
+
+    updater = Updater(token=os.environ.get('BOT_TOKEN'))
     dispatcher = updater.dispatcher
 
     add_conv_handler = ConversationHandler(
@@ -51,7 +56,12 @@ def main() -> None:
     dispatcher.add_handler(rem_conv_handler)
     dispatcher.add_handler(MessageHandler(filters=Filters.all, callback=handlers.message))
 
-    updater.start_polling()
+    try:
+        updater.start_polling()
+    except telegram.error.TelegramError:
+        logging.exception('Unable to start bot')
+        logging.info('Exiting bot...')
+
     updater.idle()
 
 

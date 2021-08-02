@@ -61,7 +61,7 @@ def add_dc(update: Update, contex: CallbackContext) -> Optional[int]:
             update.effective_message.reply_text("You already don't care about this user!")
             logging.info(
                 "Duplicate: DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\""
-                .format(ndc.doesntCareID, ndc.notImportantID, ndc.chatID)
+                .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id)
             )
             return ConversationHandler.END
 
@@ -81,31 +81,31 @@ def dc_mode(update: Update, contex: CallbackContext) -> Optional[int]:
     ndc = contex.user_data[0]
 
     if update.effective_message.text == methodkbd[0][0]:
-        ndc.responseMode = DoesntCare.ResponseMode.INSTANT
+        ndc.response_mode = DoesntCare.ResponseMode.INSTANT
         if ndc.add():
             rep = "Added user to your don't care list!"
             logging.info(
                 "Add: DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\" - RM: \"{}\" - RMO: \"{}\""
-                .format(ndc.doesntCareID, ndc.notImportantID, ndc.chatID, ndc.responseMode, ndc.responseModeOption)
+                .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id, ndc.response_mode, ndc.response_mode_option)
             )
         else:
             rep = "Sorry, an error occurred! Please try again later."
             logging.error(
                 "Add - DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\""
-                .format(ndc.doesntCareID, ndc.notImportantID, ndc.chatID)
+                .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id)
             )
         update.effective_message.reply_text(rep, reply_markup=ReplyKeyboardRemove(selective=True))
         return ConversationHandler.END
 
     elif update.effective_message.text == methodkbd[1][0]:
-        ndc.responseMode = DoesntCare.ResponseMode.TIME
+        ndc.response_mode = DoesntCare.ResponseMode.TIME
         rep = (
                     "Please reply the minimum time before reminding user again in the following format: "
                     "Hours:Minutes:Seconds\n" +
                     "for example 1:30:0")
 
     elif update.effective_message.text == methodkbd[2][0]:
-        ndc.responseMode = DoesntCare.ResponseMode.MESSAGE_COUNT
+        ndc.response_mode = DoesntCare.ResponseMode.MESSAGE_COUNT
         rep = "Please reply the count of messages before reminding user again."
     else:
         update.effective_message.reply_text("Invalid answer. Please select one of available options.")
@@ -121,14 +121,14 @@ def dc_mode_option(update: Update, contex: CallbackContext) -> Optional[int]:
     """Get don't care response mode option"""
     ndc = contex.user_data[0]
 
-    if ndc.responseMode == DoesntCare.ResponseMode.TIME:
+    if ndc.response_mode == DoesntCare.ResponseMode.TIME:
         if not re.match(r"[0-9]+:[0-9]+:[0-9]+", update.effective_message.text):
             update.effective_message.reply_text(
                 'Invalid time format, please reply in this format: Hours:Minutes:Seconds')
             return None
 
         hms = update.effective_message.text.split(':')
-        ndc.responseModeOption = datetime.timedelta(hours=int(hms[0]), minutes=int(hms[1]), seconds=int(hms[2]))
+        ndc.response_mode_option = datetime.timedelta(hours=int(hms[0]), minutes=int(hms[1]), seconds=int(hms[2]))
 
     else:
         if ((not update.effective_message.text.isdigit()) or
@@ -136,30 +136,30 @@ def dc_mode_option(update: Update, contex: CallbackContext) -> Optional[int]:
             update.effective_message.reply_text('Invalid number. Please reply a positive integer more than 1.')
             return None
 
-        ndc.responseModeOption = int(update.effective_message.text)
+        ndc.response_mode_option = int(update.effective_message.text)
 
     # Recreate a DoesntCare dc to set counter correctly
     try:
-        dc = DoesntCare(ndc.chatID, ndc.notImportantID, ndc.doesntCareID, ndc.responseMode, ndc.responseModeOption)
+        dc = DoesntCare(ndc.chat_id, ndc.not_important_id, ndc.doesnt_care_id, ndc.response_mode, ndc.response_mode_option)
     except TypeError:
         update.effective_message.reply_text("Sorry, something went wrong! Please try again later.")
         logging.exception(
-            "New: \"{}\" - NIU: \"{}\" - Chat: \"{}\" - RM: \"{}\" - RMO: \"{}\" - RC: \"{}\""
-            .format(ndc.doesntCareID, ndc.notImportantID, ndc.chatID, ndc.responseMode, ndc.responseModeOption,
-                    ndc.responseCounter)
+            "New: DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\" - RM: \"{}\" - RMO: \"{}\" - RC: \"{}\""
+            .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id, ndc.response_mode, ndc.response_mode_option,
+                    ndc.response_counter)
         )
         return ConversationHandler.END
     if dc.add():
         update.effective_message.reply_text("Added user to your don't care list!")
         logging.info(
             "Add: DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\" - RM: \"{}\" - RMO: \"{}\""
-            .format(ndc.doesntCareID, ndc.notImportantID, ndc.chatID, ndc.responseMode, ndc.responseModeOption)
+            .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id, ndc.response_mode, ndc.response_mode_option)
         )
     else:
         update.effective_message.reply_text("Sorry, an error occurred! Please try again later.")
         logging.error(
             "Add - DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\""
-            .format(ndc.doesntCareID, ndc.notImportantID, ndc.chatID)
+            .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id)
         )
     return ConversationHandler.END
 
@@ -186,20 +186,20 @@ def remove_dc(update: Update, _) -> Optional[int]:
                 update.effective_message.reply_text("Removed user from your don't care list!")
                 logging.info(
                     "Remove: DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\""
-                    .format(ndc.doesntCareID, ndc.notImportantID, ndc.chatID)
+                    .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id)
                 )
             else:
                 update.effective_message.reply_text("Sorry, an error occurred! Please try again later.")
                 logging.error(
                     "Remove - DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\""
-                    .format(ndc.doesntCareID, ndc.notImportantID, ndc.chatID)
+                    .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id)
                 )
             return ConversationHandler.END
 
     update.effective_message.reply_text("You already care about this user!")
     logging.info(
-        "Not exists:  DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\""
-        .format(ndc.doesntCareID, ndc.notImportantID, ndc.chatID)
+        "Not exists: DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\""
+        .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id)
     )
     return ConversationHandler.END
 
@@ -216,10 +216,10 @@ def message(update: Update, _) -> None:
     user_id = update.effective_user.id
 
     for dc in DoesntCare.dcList:
-        if ((dc.notImportantID == username or dc.notImportantID == user_id) and
-                dc.chatID == update.effective_chat.id):
+        if ((dc.not_important_id == username or dc.not_important_id == user_id) and
+                dc.chat_id == update.effective_chat.id):
             try:
-                doesnt_care_user = update.effective_chat.get_member(user_id=dc.doesntCareID).user
+                doesnt_care_user = update.effective_chat.get_member(user_id=dc.doesnt_care_id).user
             except telegram.error.TelegramError:
                 # Probably user left the chat
                 dc.remove()

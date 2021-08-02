@@ -11,46 +11,46 @@ class DoesntCare:
 
     def __init__(self, chat_id: int, not_important_id: int, doesnt_care_id: int, response_mode: int = 0,
                  response_mode_option=0) -> None:
-        self.chatID = chat_id
-        self.notImportantID = not_important_id
-        self.doesntCareID = doesnt_care_id
-        self.responseMode = response_mode
-        self.responseModeOption = response_mode_option
-        self.lastResponseDT = datetime.datetime.min
-        self.responseCounter = 1
+        self.chat_id = chat_id
+        self.not_important_id = not_important_id
+        self.doesnt_care_id = doesnt_care_id
+        self.response_mode = response_mode
+        self.response_mode_option = response_mode_option
+        self.last_response_dt = datetime.datetime.min
+        self.response_counter = 1
 
         if response_mode == DoesntCare.ResponseMode.TIME:
             if type(response_mode_option) is not datetime.timedelta:
-                raise TypeError("type of responseModeOption doesn't match responseMode")
+                raise TypeError("type of response_mode_option doesn't match response_mode")
 
         elif response_mode == DoesntCare.ResponseMode.MESSAGE_COUNT:
             if type(response_mode_option) is not int:
-                raise TypeError("type of responseModeOption doesn't match responseMode")
+                raise TypeError("type of response_mode_option doesn't match response_mode")
 
     def __eq__(self, other) -> bool:
         if self.__class__ != other.__class__:
             return False
 
-        if (self.chatID == other.chatID and
-                self.doesntCareID == other.doesntCareID and
-                self.notImportantID == other.notImportantID):
+        if (self.chat_id == other.chat_id and
+                self.doesnt_care_id == other.doesnt_care_id and
+                self.not_important_id == other.not_important_id):
             return True
 
     def should_response(self):
-        if self.responseMode == DoesntCare.ResponseMode.INSTANT:
+        if self.response_mode == DoesntCare.ResponseMode.INSTANT:
             return True
 
-        elif self.responseMode == DoesntCare.ResponseMode.TIME:
-            if datetime.datetime.now() - self.lastResponseDT > self.responseModeOption:
-                self.lastResponseDT = datetime.datetime.now()
+        elif self.response_mode == DoesntCare.ResponseMode.TIME:
+            if datetime.datetime.now() - self.last_response_dt > self.response_mode_option:
+                self.last_response_dt = datetime.datetime.now()
                 return True
 
-        elif self.responseMode == DoesntCare.ResponseMode.MESSAGE_COUNT:
-            if self.responseCounter <= 1:
-                self.responseCounter = self.responseModeOption
+        elif self.response_mode == DoesntCare.ResponseMode.MESSAGE_COUNT:
+            if self.response_counter <= 1:
+                self.response_counter = self.response_mode_option
                 return True
             else:
-                self.responseCounter -= 1
+                self.response_counter -= 1
 
         return False
 
