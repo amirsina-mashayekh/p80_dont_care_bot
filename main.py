@@ -25,8 +25,9 @@ logging.basicConfig(
 def main() -> None:
     """Main code"""
 
-    data.connect()
-    data.create_tables()
+    if not (data.connect() and data.create_tables()):
+        logging.info('Exiting bot...')
+        return
 
     updater = Updater(token=os.environ.get('BOT_TOKEN'))
     dispatcher = updater.dispatcher
@@ -34,9 +35,9 @@ def main() -> None:
     add_conv_handler = ConversationHandler(
         entry_points=[CommandHandler(command='add', callback=handlers.add)],
         states={
-            MenuLevels.GET_USER: [MessageHandler(filters=Filters.reply, callback=handlers.add_dc)],
-            MenuLevels.GET_METHOD: [MessageHandler(filters=Filters.reply, callback=handlers.dc_mode)],
-            MenuLevels.GET_METHOD_OPTION: [MessageHandler(filters=Filters.reply, callback=handlers.dc_mode_option)],
+            MenuLevels.GET_USER: [MessageHandler(filters=Filters.text, callback=handlers.add_dc)],
+            MenuLevels.GET_METHOD: [MessageHandler(filters=Filters.text, callback=handlers.dc_mode)],
+            MenuLevels.GET_METHOD_OPTION: [MessageHandler(filters=Filters.text, callback=handlers.dc_mode_option)],
         },
         fallbacks=[
             CommandHandler(command='cancel', callback=handlers.cancel),
@@ -47,7 +48,7 @@ def main() -> None:
     rem_conv_handler = ConversationHandler(
         entry_points=[CommandHandler(command='remove', callback=handlers.remove)],
         states={
-            MenuLevels.GET_USER: [MessageHandler(filters=Filters.reply, callback=handlers.remove_dc)]
+            MenuLevels.GET_USER: [MessageHandler(filters=Filters.text, callback=handlers.remove_dc)]
         },
         fallbacks=[CommandHandler(command='cancel', callback=handlers.cancel)]
     )
@@ -61,6 +62,7 @@ def main() -> None:
     except telegram.error.TelegramError:
         logging.exception('Unable to start bot')
         logging.info('Exiting bot...')
+        return
 
     updater.idle()
 
