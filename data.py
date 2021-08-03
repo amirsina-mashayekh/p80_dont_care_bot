@@ -106,7 +106,22 @@ def remove(dc: doesntCare.DoesntCare) -> bool:
         return False
 
 
-def find(chat_id: int, not_important_id: int, doesnt_care_id: int) -> Optional[doesntCare.DoesntCare]:
+def remove_all_dci(doesnt_care_id: int, chat_id: int) -> bool:
+    global db_cursor
+    try:
+        db_cursor.execute(
+            'DELETE FROM \"DC_List\" WHERE '
+            'doesnt_care_id = ? and '
+            'chat_id = ?',
+            (doesnt_care_id, chat_id)
+        )
+        return True
+    except sqlite3.Error:
+        logging.exception('Error while removing all for doesnt_care_id')
+        return False
+
+
+def find(chat_id: int, not_important_id: str, doesnt_care_id: int) -> Optional[doesntCare.DoesntCare]:
     global db_cursor
     try:
         db_cursor.execute(

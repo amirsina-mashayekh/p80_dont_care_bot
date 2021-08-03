@@ -9,7 +9,7 @@ class DoesntCare:
     class ResponseMode:
         INSTANT, TIME, MESSAGE_COUNT = range(3)
 
-    def __init__(self, chat_id: int, not_important_id, doesnt_care_id: int, response_mode: int = 0,
+    def __init__(self, chat_id: int, not_important_id: str, doesnt_care_id: int, response_mode: int = 0,
                  response_mode_option: float = 0, last_response_dt: datetime.datetime = datetime.datetime.min,
                  response_counter: int = 1) -> None:
         self.chat_id = chat_id

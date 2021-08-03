@@ -55,8 +55,17 @@ def main() -> None:
         fallbacks=[CommandHandler(command='cancel', callback=handlers.cancel)]
     )
 
+    rem_all_conv_handler = ConversationHandler(
+        entry_points=[CommandHandler(command='remove_all', callback=handlers.remove_all)],
+        states={
+            0: [MessageHandler(filters=txt_not_cmd, callback=handlers.remove_all_confirm)]
+        },
+        fallbacks=[CommandHandler(command='cancel', callback=handlers.cancel)]
+    )
+
     dispatcher.add_handler(add_conv_handler)
     dispatcher.add_handler(rem_conv_handler)
+    dispatcher.add_handler(rem_all_conv_handler)
     dispatcher.add_handler(CommandHandler(command='get_log', callback=handlers.get_log))
     dispatcher.add_handler(CommandHandler(command='del_log', callback=handlers.del_log))
     dispatcher.add_handler(MessageHandler(filters=Filters.all, callback=handlers.message))

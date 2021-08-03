@@ -23,6 +23,10 @@ methodkbd = [
     ['Cancel']
 ]
 
+ynkbd = [
+    ['Yes', 'No']
+]
+
 
 def create_dc(update: Update) -> Optional[DoesntCare]:
     """Create new DoesntCare from message"""
@@ -46,7 +50,7 @@ def create_dc(update: Update) -> Optional[DoesntCare]:
 def add(update: Update, _) -> int:
     """Handle add command"""
     update.message.reply_text(
-        "Please mention the user who you don't care about Send /cancel to cancel."
+        "Please mention the user who you don't care about. Send /cancel to cancel."
     )
     return MenuLevels.GET_USER
 
@@ -63,7 +67,7 @@ def add_dc(update: Update, contex: CallbackContext) -> Optional[int]:
         if data.find(ndc.chat_id, ndc.not_important_id, ndc.doesnt_care_id) is not None:
             update.effective_message.reply_text("You already don't care about this user!")
             logging.info(
-                "Duplicate: DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\""
+                "Duplicate: DCU: \"{}\", NIU: \"{}\", Chat: \"{}\""
                 .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id)
             )
             return ConversationHandler.END
@@ -76,8 +80,7 @@ def add_dc(update: Update, contex: CallbackContext) -> Optional[int]:
                               input_field_placeholder='Select one...')
 
     update.effective_message.reply_text(
-        "How often do you want to remind the user that you don't care about him/her?",
-        reply_markup=rkm
+        "How often do you want to remind the user that you don't care about him/her?", reply_markup=rkm
     )
     return MenuLevels.GET_METHOD
 
@@ -85,33 +88,34 @@ def add_dc(update: Update, contex: CallbackContext) -> Optional[int]:
 def dc_mode(update: Update, contex: CallbackContext) -> Optional[int]:
     """Get don't care response mode"""
     ndc = contex.user_data[0]
+    ans = update.effective_message.text
 
-    if update.effective_message.text == methodkbd[0][0]:
+    if ans == methodkbd[0][0]:
         ndc.response_mode = DoesntCare.ResponseMode.INSTANT
         if ndc.add():
             rep = "Added user to your don't care list!"
             logging.info(
-                "Add: DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\" - RM: \"{}\" - RMO: \"{}\""
+                "Add: DCU: \"{}\", NIU: \"{}\", Chat: \"{}\", RM: \"{}\", RMO: \"{}\""
                 .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id, ndc.response_mode,
                         ndc.response_mode_option)
             )
         else:
             rep = "Sorry, an error occurred! Please try again later."
             logging.error(
-                "Add - DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\""
+                "Add, DCU: \"{}\", NIU: \"{}\", Chat: \"{}\""
                 .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id)
             )
         update.effective_message.reply_text(rep, reply_markup=ReplyKeyboardRemove(selective=True))
         return ConversationHandler.END
 
-    elif update.effective_message.text == methodkbd[1][0]:
+    elif ans == methodkbd[1][0]:
         ndc.response_mode = DoesntCare.ResponseMode.TIME
         rep = (
                 "Please send the minimum time before reminding user again in the following format: "
                 "Hours:Minutes:Seconds\n" +
                 "for example 1:30:0")
 
-    elif update.effective_message.text == methodkbd[2][0]:
+    elif ans == methodkbd[2][0]:
         ndc.response_mode = DoesntCare.ResponseMode.MESSAGE_COUNT
         rep = "Please send the count of messages before reminding user again."
     else:
@@ -149,14 +153,14 @@ def dc_mode_option(update: Update, contex: CallbackContext) -> Optional[int]:
     if ndc.add():
         update.effective_message.reply_text("Added user to your don't care list!")
         logging.info(
-            "Add: DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\" - RM: \"{}\" - RMO: \"{}\""
+            "Add: DCU: \"{}\", NIU: \"{}\", Chat: \"{}\", RM: \"{}\", RMO: \"{}\""
             .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id, ndc.response_mode,
                     ndc.response_mode_option)
         )
     else:
         update.effective_message.reply_text("Sorry, an error occurred! Please try again later.")
         logging.error(
-            "Add - DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\""
+            "Add, DCU: \"{}\", NIU: \"{}\", Chat: \"{}\""
             .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id)
         )
     return ConversationHandler.END
@@ -165,7 +169,7 @@ def dc_mode_option(update: Update, contex: CallbackContext) -> Optional[int]:
 def remove(update: Update, _) -> int:
     """Handle remove command"""
     update.message.reply_text(
-        "Please mention the user who you want to care about Send /cancel to cancel."
+        "Please mention the user who you want to care about. Send /cancel to cancel."
     )
     return MenuLevels.GET_USER
 
@@ -183,13 +187,13 @@ def remove_dc(update: Update, _) -> Optional[int]:
             if ndc.remove():
                 update.effective_message.reply_text("Removed user from your don't care list!")
                 logging.info(
-                    "Remove: DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\""
+                    "Remove: DCU: \"{}\", NIU: \"{}\", Chat: \"{}\""
                     .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id)
                 )
             else:
                 update.effective_message.reply_text("Sorry, an error occurred! Please try again later.")
                 logging.error(
-                    "Remove - DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\""
+                    "Remove, DCU: \"{}\", NIU: \"{}\", Chat: \"{}\""
                     .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id)
                 )
             return ConversationHandler.END
@@ -199,9 +203,41 @@ def remove_dc(update: Update, _) -> Optional[int]:
 
     update.effective_message.reply_text("You already care about this user!")
     logging.info(
-        "Not exists: DCU: \"{}\" - NIU: \"{}\" - Chat: \"{}\""
+        "Not exists: DCU: \"{}\", NIU: \"{}\", Chat: \"{}\""
         .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id)
     )
+    return ConversationHandler.END
+
+
+def remove_all(update: Update, _) -> int:
+    """Handle remove_all command"""
+    rkm = ReplyKeyboardMarkup(ynkbd, one_time_keyboard=True, selective=True,
+                              input_field_placeholder='Select one...')
+    update.effective_message.reply_text(
+        'Are you sure you want to care about all people in this chat?', reply_markup=rkm
+    )
+    return 0
+
+
+def remove_all_confirm(update: Update, _) -> Optional[int]:
+    """Confirm remove_all action"""
+    ans = update.effective_message.text
+    if ans == ynkbd[0][0]:
+        if data.remove_all_dci(update.effective_user.id, update.effective_chat.id):
+            rep = "Now you care about everyone in this chat!"
+            logging.info(
+                "Remove All: DCU: \"{}\", Chat: \"{}\""
+                .format(update.effective_user.id, update.effective_chat.id)
+            )
+        else:
+            rep = "Sorry, an error occurred! Please try again later."
+    elif ans == ynkbd[0][1]:
+        rep = 'Removing canceled.'
+    else:
+        update.effective_message.reply_text("Invalid answer. Please select one of available options.")
+        return None
+
+    update.effective_message.reply_text(rep, reply_markup=ReplyKeyboardRemove(selective=True))
     return ConversationHandler.END
 
 
@@ -233,7 +269,7 @@ def message(update: Update, _) -> None:
             return
 
         if not dc.should_response():
-            return
+            continue
 
         dc.update()
         update.effective_message.reply_text(doesnt_care_user.full_name + " doesn't care!")
