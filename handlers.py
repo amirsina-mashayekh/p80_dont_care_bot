@@ -1,5 +1,6 @@
 import datetime
 import logging
+import os
 import re
 import sqlite3
 from typing import Optional
@@ -275,6 +276,8 @@ def message(update: Update, _) -> None:
 
 
 def vac_db(update: Update, _) -> None:
+    if str(update.effective_user.id) != os.environ.get('OWNER_ID'):
+        return
     if data.vacuum():
         update.effective_message.reply_text('VACUUM Done.')
     else:
