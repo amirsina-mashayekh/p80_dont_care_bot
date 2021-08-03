@@ -257,7 +257,7 @@ def del_log(update: Update, _) -> None:
         os.remove('Log.log')
         logging.basicConfig(
             filename="Log.log", level=logging.INFO,
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+            format='%(asctime)s, %(name)s, %(levelname)s: %(message)s'
         )
     except OSError:
         logging.exception('Error while deleting log')
