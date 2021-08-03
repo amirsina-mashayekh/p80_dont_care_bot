@@ -176,3 +176,11 @@ def find_by_nii(not_important_id: str) -> Optional[list]:
     except sqlite3.Error:
         logging.exception('Error while querying data')
         return None
+
+
+def vacuum() -> None:
+    global db_cursor
+    try:
+        db_cursor.execute('VACUUM')
+    except sqlite3.Error:
+        logging.exception('Error while performing VACUUM')

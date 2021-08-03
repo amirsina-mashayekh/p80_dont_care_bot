@@ -66,8 +66,7 @@ def main() -> None:
     dispatcher.add_handler(add_conv_handler)
     dispatcher.add_handler(rem_conv_handler)
     dispatcher.add_handler(rem_all_conv_handler)
-    dispatcher.add_handler(CommandHandler(command='get_log', callback=handlers.get_log))
-    dispatcher.add_handler(CommandHandler(command='del_log', callback=handlers.del_log))
+    dispatcher.add_handler(CommandHandler(command='vac_db', callback=handlers.vac_db))
     dispatcher.add_handler(MessageHandler(filters=Filters.all, callback=handlers.message))
 
     try:
