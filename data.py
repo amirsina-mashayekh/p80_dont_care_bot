@@ -178,9 +178,12 @@ def find_by_nii(not_important_id: str) -> Optional[list]:
         return None
 
 
-def vacuum() -> None:
+def vacuum() -> bool:
     global db_cursor
     try:
         db_cursor.execute('VACUUM')
+        logging.info('VACUUM done.')
+        return True
     except sqlite3.Error:
         logging.exception('Error while performing VACUUM')
+        return False

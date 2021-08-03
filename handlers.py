@@ -274,5 +274,9 @@ def message(update: Update, _) -> None:
         update.effective_message.reply_text(doesnt_care_user.full_name + " doesn't care!")
 
 
-def vac_db(_) -> None:
-    data.vacuum()
+def vac_db(update: Update, _) -> None:
+    if data.vacuum():
+        update.effective_message.reply_text('VACUUM Done.')
+    else:
+        update.effective_message.reply_text('VACUUM failed.')
+
