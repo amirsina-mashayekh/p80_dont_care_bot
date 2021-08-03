@@ -32,12 +32,14 @@ def main() -> None:
     updater = Updater(token=os.environ.get('BOT_TOKEN'))
     dispatcher = updater.dispatcher
 
+    txt_not_cmd = Filters.text & ~Filters.command
+
     add_conv_handler = ConversationHandler(
         entry_points=[CommandHandler(command='add', callback=handlers.add)],
         states={
-            MenuLevels.GET_USER: [MessageHandler(filters=Filters.text, callback=handlers.add_dc)],
-            MenuLevels.GET_METHOD: [MessageHandler(filters=Filters.text, callback=handlers.dc_mode)],
-            MenuLevels.GET_METHOD_OPTION: [MessageHandler(filters=Filters.text, callback=handlers.dc_mode_option)],
+            MenuLevels.GET_USER: [MessageHandler(filters=txt_not_cmd, callback=handlers.add_dc)],
+            MenuLevels.GET_METHOD: [MessageHandler(filters=txt_not_cmd, callback=handlers.dc_mode)],
+            MenuLevels.GET_METHOD_OPTION: [MessageHandler(filters=txt_not_cmd, callback=handlers.dc_mode_option)],
         },
         fallbacks=[
             CommandHandler(command='cancel', callback=handlers.cancel),
@@ -48,13 +50,15 @@ def main() -> None:
     rem_conv_handler = ConversationHandler(
         entry_points=[CommandHandler(command='remove', callback=handlers.remove)],
         states={
-            MenuLevels.GET_USER: [MessageHandler(filters=Filters.text, callback=handlers.remove_dc)]
+            MenuLevels.GET_USER: [MessageHandler(filters=txt_not_cmd, callback=handlers.remove_dc)]
         },
         fallbacks=[CommandHandler(command='cancel', callback=handlers.cancel)]
     )
 
     dispatcher.add_handler(add_conv_handler)
     dispatcher.add_handler(rem_conv_handler)
+    dispatcher.add_handler(CommandHandler(command='get_log', callback=handlers.get_log))
+    dispatcher.add_handler(CommandHandler(command='del_log', callback=handlers.del_log))
     dispatcher.add_handler(MessageHandler(filters=Filters.all, callback=handlers.message))
 
     try:

@@ -1,5 +1,6 @@
 import datetime
 import logging
+import os
 import re
 import sqlite3
 from typing import Optional
@@ -236,3 +237,27 @@ def message(update: Update, _) -> None:
 
         dc.update()
         update.effective_message.reply_text(doesnt_care_user.full_name + " doesn't care!")
+
+
+def get_log(update: Update, _) -> None:
+    if str(update.effective_user.id) != os.environ.get('OWNER_ID'):
+        return
+    try:
+        if os.path.exists('Log.log'):
+            update.effective_message.reply_document(open('Log.log'))
+    except OSError:
+        logging.exception('Error while getting log')
+
+
+def del_log(update: Update, _) -> None:
+    if str(update.effective_user.id) != os.environ.get('OWNER_ID'):
+        return
+    try:
+        logging.shutdown()
+        os.remove('Log.log')
+        logging.basicConfig(
+            filename="Log.log", level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
+    except OSError:
+        logging.exception('Error while deleting log')
