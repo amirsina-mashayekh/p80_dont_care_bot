@@ -2,7 +2,7 @@ import datetime
 import logging
 import os
 import re
-import sqlite3
+import psycopg2
 from typing import Optional
 
 import telegram.error
@@ -71,7 +71,7 @@ def add_dc(update: Update, contex: CallbackContext) -> Optional[int]:
                 .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id)
             )
             return ConversationHandler.END
-    except sqlite3.Error:
+    except psycopg2.Error:
         update.effective_message.reply_text("Sorry, an error occurred! Please try again later.")
         return ConversationHandler.END
 
@@ -197,7 +197,7 @@ def remove_dc(update: Update, _) -> Optional[int]:
                     .format(ndc.doesnt_care_id, ndc.not_important_id, ndc.chat_id)
                 )
             return ConversationHandler.END
-    except sqlite3.Error:
+    except psycopg2.Error:
         update.effective_message.reply_text("Sorry, an error occurred! Please try again later.")
         return ConversationHandler.END
 

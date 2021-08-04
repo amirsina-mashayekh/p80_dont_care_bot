@@ -1,23 +1,23 @@
 import logging
-import sqlite3
+import os
+
+import psycopg2
 from typing import Optional
 
 import doesntCare
 
 # This won't run. Just to suppress IDE warnings and help code auto-complete
-db_cursor = sqlite3.connect('').cursor()
+db_cursor = psycopg2.connect('').cursor()
 
 
 def connect() -> bool:
     global db_cursor
     try:
-        db = sqlite3.connect(database='data.db', detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES,
-                             check_same_thread=False, isolation_level=None)
-        db.row_factory = sqlite3.Row
+        db = psycopg2.connect(os.environ.get('DB_URI'))
         db_cursor = db.cursor()
         logging.info('Connected to database')
         return True
-    except sqlite3.Error:
+    except psycopg2.Error:
         logging.exception('Error while connecting to database')
         return False
 
@@ -29,10 +29,10 @@ def create_tables() -> bool:
             'CREATE TABLE IF NOT EXISTS \"DC_List\"'
             '('
             'id INTEGER,'
-            'chat_id INTEGER NOT NULL,'
+            'chat_id BIGINT NOT NULL,'
             'not_important_id TEXT NOT NULL,'
-            'doesnt_care_id INTEGER NOT NULL,'
-            'response_mode INTEGER NOT NULL,'
+            'doesnt_care_id BIGINT NOT NULL,'
+            'response_mode SMALLINT NOT NULL,'
             'response_mode_option REAL NOT NULL,'
             'last_response_dt TIMESTAMP NOT NULL,'
             'response_counter INTEGER NOT NULL,'
@@ -51,7 +51,7 @@ def create_tables() -> bool:
         )
         logging.info('Indexes checked successfully')
         return True
-    except sqlite3.Error:
+    except psycopg2.Error:
         logging.exception('Error while creating tables')
         return False
 
@@ -67,7 +67,7 @@ def insert(dc: doesntCare.DoesntCare) -> bool:
              dc.last_response_dt, dc.response_counter)
         )
         return True
-    except sqlite3.Error:
+    except psycopg2.Error:
         logging.exception('Error while adding new entry to database')
         return False
 
@@ -85,7 +85,7 @@ def update(dc: doesntCare.DoesntCare) -> bool:
             (dc.last_response_dt, dc.response_counter, dc.chat_id, dc.not_important_id, dc.doesnt_care_id)
         )
         return True
-    except sqlite3.Error:
+    except psycopg2.Error:
         logging.exception('Error while adding new entry to database')
         return False
 
@@ -101,7 +101,7 @@ def remove(dc: doesntCare.DoesntCare) -> bool:
             (dc.chat_id, dc.not_important_id, dc.doesnt_care_id)
         )
         return True
-    except sqlite3.Error:
+    except psycopg2.Error:
         logging.exception('Error while removing entry from database')
         return False
 
@@ -116,7 +116,7 @@ def remove_all_dci(doesnt_care_id: int, chat_id: int) -> bool:
             (doesnt_care_id, chat_id)
         )
         return True
-    except sqlite3.Error:
+    except psycopg2.Error:
         logging.exception('Error while removing all for doesnt_care_id')
         return False
 
@@ -145,7 +145,7 @@ def find(chat_id: int, not_important_id: str, doesnt_care_id: int) -> Optional[d
             last_response_dt=res['last_response_dt'],
             response_counter=res['response_counter']
         )
-    except sqlite3.Error:
+    except psycopg2.Error:
         logging.exception('Error while querying data')
         raise
 
@@ -174,7 +174,7 @@ def find_by_nii_ci(not_important_id: str, chat_id: int) -> Optional[list]:
                 response_counter=row['response_counter']
             ))
         return dc_list
-    except sqlite3.Error:
+    except psycopg2.Error:
         logging.exception('Error while querying data')
         return None
 
@@ -185,6 +185,6 @@ def vacuum() -> bool:
         db_cursor.execute('VACUUM')
         logging.info('VACUUM done.')
         return True
-    except sqlite3.Error:
+    except psycopg2.Error:
         logging.exception('Error while performing VACUUM')
         return False
