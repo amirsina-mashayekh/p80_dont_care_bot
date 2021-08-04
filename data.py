@@ -7,13 +7,13 @@ from typing import Optional
 import doesntCare
 
 # This won't run. Just to suppress IDE warnings and help code auto-complete
-db_cursor = psycopg2.connect('').cursor()
+db_cursor = None
 
 
 def connect() -> bool:
     global db_cursor
     try:
-        db = psycopg2.connect(os.environ.get('DB_URL'))
+        db = psycopg2.connect(os.environ.get('DATABASE_URL'))
         db_cursor = db.cursor()
         logging.info('Connected to database')
         return True
