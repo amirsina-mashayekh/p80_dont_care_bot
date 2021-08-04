@@ -63,7 +63,7 @@ def insert(dc: doesntCare.DoesntCare) -> bool:
         db_cursor.execute(
             'INSERT INTO \"DC_List\"(chat_id, not_important_id, doesnt_care_id, response_mode, '
             'response_mode_option, last_response_dt, response_counter) '
-            'VALUES(?, ?, ?, ?, ?, ?, ?)',
+            'VALUES(%s, %s, %s, %s, %s, %s, %s)',
             (dc.chat_id, dc.not_important_id, dc.doesnt_care_id, dc.response_mode, dc.response_mode_option,
              dc.last_response_dt, dc.response_counter)
         )
@@ -78,11 +78,11 @@ def update(dc: doesntCare.DoesntCare) -> bool:
     try:
         db_cursor.execute(
             'UPDATE \"DC_List\" SET '
-            'last_response_dt = ?,'
-            'response_counter = ?'
-            'WHERE chat_id = ? AND '
-            'not_important_id = ? AND '
-            'doesnt_care_id = ?',
+            'last_response_dt = %s,'
+            'response_counter = %s'
+            'WHERE chat_id = %s AND '
+            'not_important_id = %s AND '
+            'doesnt_care_id = %s',
             (dc.last_response_dt, dc.response_counter, dc.chat_id, dc.not_important_id, dc.doesnt_care_id)
         )
         return True
@@ -96,9 +96,9 @@ def remove(dc: doesntCare.DoesntCare) -> bool:
     try:
         db_cursor.execute(
             'DELETE FROM \"DC_List\" WHERE '
-            'chat_id = ? AND '
-            'not_important_id = ? AND '
-            'doesnt_care_id = ?',
+            'chat_id = %s AND '
+            'not_important_id = %s AND '
+            'doesnt_care_id = %s',
             (dc.chat_id, dc.not_important_id, dc.doesnt_care_id)
         )
         return True
@@ -112,8 +112,8 @@ def remove_all_dci(doesnt_care_id: int, chat_id: int) -> bool:
     try:
         db_cursor.execute(
             'DELETE FROM \"DC_List\" WHERE '
-            'doesnt_care_id = ? AND '
-            'chat_id = ?',
+            'doesnt_care_id = %s AND '
+            'chat_id = %s',
             (doesnt_care_id, chat_id)
         )
         return True
@@ -127,9 +127,9 @@ def find(chat_id: int, not_important_id: str, doesnt_care_id: int) -> Optional[d
     try:
         db_cursor.execute(
             'SELECT * FROM \"DC_List\" WHERE '
-            'chat_id = ? AND '
-            'not_important_id = ? AND '
-            'doesnt_care_id = ?',
+            'chat_id = %s AND '
+            'not_important_id = %s AND '
+            'doesnt_care_id = %s',
             (chat_id, not_important_id, doesnt_care_id)
         )
 
@@ -157,8 +157,8 @@ def find_by_nii_ci(not_important_id: str, chat_id: int) -> Optional[list]:
     try:
         db_cursor.execute(
             'SELECT * FROM \"DC_List\" WHERE '
-            'not_important_id = ? AND '
-            'chat_id = ?',
+            'not_important_id = %s AND '
+            'chat_id = %s',
             (not_important_id, chat_id)
         )
 
