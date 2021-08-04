@@ -252,8 +252,8 @@ def message(update: Update, _) -> None:
     username = update.effective_user.username
     user_id = str(update.effective_user.id)
 
-    dc_list0 = data.find_by_nii(username)
-    dc_list1 = data.find_by_nii(user_id)
+    dc_list0 = data.find_by_nii_ci(username, update.effective_chat.id)
+    dc_list1 = data.find_by_nii_ci(user_id, update.effective_chat.id)
 
     if (dc_list0 is None) or (dc_list1 is None):
         return
@@ -282,4 +282,3 @@ def vac_db(update: Update, _) -> None:
         update.effective_message.reply_text('VACUUM Done.')
     else:
         update.effective_message.reply_text('VACUUM failed.')
-

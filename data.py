@@ -150,14 +150,15 @@ def find(chat_id: int, not_important_id: str, doesnt_care_id: int) -> Optional[d
         raise
 
 
-def find_by_nii(not_important_id: str) -> Optional[list]:
+def find_by_nii_ci(not_important_id: str, chat_id: int) -> Optional[list]:
     global db_cursor
     dc_list = []
     try:
         db_cursor.execute(
             'SELECT * FROM \"DC_List\" WHERE '
-            'not_important_id = ?',
-            (not_important_id,)
+            'not_important_id = ? and '
+            'chat_id = ?',
+            (not_important_id, chat_id)
         )
 
         res = db_cursor.fetchall()
