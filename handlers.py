@@ -273,12 +273,3 @@ def message(update: Update, _) -> None:
 
         dc.update()
         update.effective_message.reply_text(doesnt_care_user.full_name + " doesn't care!")
-
-
-def vac_db(update: Update, _) -> None:
-    if str(update.effective_user.id) != os.environ.get('OWNER_ID'):
-        return
-    if data.vacuum():
-        update.effective_message.reply_text('VACUUM Done.')
-    else:
-        update.effective_message.reply_text('VACUUM failed.')

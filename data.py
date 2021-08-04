@@ -6,7 +6,6 @@ from typing import Optional
 
 import doesntCare
 
-# This won't run. Just to suppress IDE warnings and help code auto-complete
 db_cursor = None
 
 
@@ -180,14 +179,3 @@ def find_by_nii_ci(not_important_id: str, chat_id: int) -> Optional[list]:
     except psycopg2.Error:
         logging.exception('Error while querying data')
         return None
-
-
-def vacuum() -> bool:
-    global db_cursor
-    try:
-        db_cursor.execute('VACUUM')
-        logging.info('VACUUM done.')
-        return True
-    except psycopg2.Error:
-        logging.exception('Error while performing VACUUM')
-        return False
