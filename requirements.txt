@@ -1,2 +1,2 @@
-python-telegram-bot~=13.7
-psycopg2-binary~=2.9.1
+python-telegram-bot>=13.7
+psycopg2-binary>=2.9.1

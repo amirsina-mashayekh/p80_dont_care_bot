@@ -17,8 +17,7 @@ import handlers
 from menuLevels import MenuLevels
 
 logging.basicConfig(
-    filename="Log.log", level=logging.INFO,
-    format='%(asctime)s, %(name)s, %(levelname)s: %(message)s'
+    level=logging.INFO, format='%(asctime)s, %(name)s, %(levelname)s: %(message)s'
 )
 
 
