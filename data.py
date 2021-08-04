@@ -13,7 +13,7 @@ db_cursor = psycopg2.connect('').cursor()
 def connect() -> bool:
     global db_cursor
     try:
-        db = psycopg2.connect(os.environ.get('DB_URI'))
+        db = psycopg2.connect(os.environ.get('DB_URL'))
         db_cursor = db.cursor()
         logging.info('Connected to database')
         return True
