@@ -29,7 +29,7 @@ def create_tables() -> bool:
         db_cursor.execute(
             'CREATE TABLE IF NOT EXISTS \"DC_List\"'
             '('
-            'id INTEGER,'
+            'id SERIAL,'
             'chat_id BIGINT NOT NULL,'
             'not_important_id TEXT NOT NULL,'
             'doesnt_care_id BIGINT NOT NULL,'
