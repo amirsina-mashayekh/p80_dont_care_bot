@@ -126,25 +126,26 @@ def find(chat_id: int, not_important_id: str, doesnt_care_id: int) -> Optional[d
     global db_cursor
     try:
         db_cursor.execute(
-            'SELECT * FROM \"DC_List\" WHERE '
+            'SELECT response_mode, response_mode_option, last_response_dt, response_counter '
+            'FROM \"DC_List\" WHERE '
             'chat_id = %s AND '
             'not_important_id = %s AND '
             'doesnt_care_id = %s',
             (chat_id, not_important_id, doesnt_care_id)
         )
 
-        res = db_cursor.fetchone()
-        if res is None:
+        row = db_cursor.fetchone()
+        if row is None:
             return None  # Record not found
 
         return doesntCare.DoesntCare(
             chat_id=chat_id,
             not_important_id=not_important_id,
             doesnt_care_id=doesnt_care_id,
-            response_mode=res['response_mode'],
-            response_mode_option=res['response_mode_option'],
-            last_response_dt=res['last_response_dt'],
-            response_counter=res['response_counter']
+            response_mode=row[0],
+            response_mode_option=row[1],
+            last_response_dt=row[2],
+            response_counter=row[3]
         )
     except psycopg2.Error:
         logging.exception('Error while querying data')
@@ -156,7 +157,8 @@ def find_by_nii_ci(not_important_id: str, chat_id: int) -> Optional[list]:
     dc_list = []
     try:
         db_cursor.execute(
-            'SELECT * FROM \"DC_List\" WHERE '
+            'SELECT doesnt_care_id, response_mode, response_mode_option, last_response_dt, response_counter '
+            'FROM \"DC_List\" WHERE '
             'not_important_id = %s AND '
             'chat_id = %s',
             (not_important_id, chat_id)
@@ -166,13 +168,13 @@ def find_by_nii_ci(not_important_id: str, chat_id: int) -> Optional[list]:
 
         for row in res:
             dc_list.append(doesntCare.DoesntCare(
-                chat_id=row['chat_id'],
+                chat_id=chat_id,
                 not_important_id=not_important_id,
-                doesnt_care_id=row['doesnt_care_id'],
-                response_mode=row['response_mode'],
-                response_mode_option=row['response_mode_option'],
-                last_response_dt=row['last_response_dt'],
-                response_counter=row['response_counter']
+                doesnt_care_id=row[0],
+                response_mode=row[1],
+                response_mode_option=row[2],
+                last_response_dt=row[3],
+                response_counter=row[4]
             ))
         return dc_list
     except psycopg2.Error:
