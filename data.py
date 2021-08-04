@@ -14,6 +14,7 @@ def connect() -> bool:
     global db_cursor
     try:
         db = psycopg2.connect(os.environ.get('DATABASE_URL'))
+        db.autocommit = True
         db_cursor = db.cursor()
         logging.info('Connected to database')
         return True
@@ -79,8 +80,8 @@ def update(dc: doesntCare.DoesntCare) -> bool:
             'UPDATE \"DC_List\" SET '
             'last_response_dt = ?,'
             'response_counter = ?'
-            'WHERE chat_id = ? and '
-            'not_important_id = ? and '
+            'WHERE chat_id = ? AND '
+            'not_important_id = ? AND '
             'doesnt_care_id = ?',
             (dc.last_response_dt, dc.response_counter, dc.chat_id, dc.not_important_id, dc.doesnt_care_id)
         )
@@ -95,8 +96,8 @@ def remove(dc: doesntCare.DoesntCare) -> bool:
     try:
         db_cursor.execute(
             'DELETE FROM \"DC_List\" WHERE '
-            'chat_id = ? and '
-            'not_important_id = ? and '
+            'chat_id = ? AND '
+            'not_important_id = ? AND '
             'doesnt_care_id = ?',
             (dc.chat_id, dc.not_important_id, dc.doesnt_care_id)
         )
@@ -111,7 +112,7 @@ def remove_all_dci(doesnt_care_id: int, chat_id: int) -> bool:
     try:
         db_cursor.execute(
             'DELETE FROM \"DC_List\" WHERE '
-            'doesnt_care_id = ? and '
+            'doesnt_care_id = ? AND '
             'chat_id = ?',
             (doesnt_care_id, chat_id)
         )
@@ -126,8 +127,8 @@ def find(chat_id: int, not_important_id: str, doesnt_care_id: int) -> Optional[d
     try:
         db_cursor.execute(
             'SELECT * FROM \"DC_List\" WHERE '
-            'chat_id = ? and '
-            'not_important_id = ? and '
+            'chat_id = ? AND '
+            'not_important_id = ? AND '
             'doesnt_care_id = ?',
             (chat_id, not_important_id, doesnt_care_id)
         )
@@ -156,7 +157,7 @@ def find_by_nii_ci(not_important_id: str, chat_id: int) -> Optional[list]:
     try:
         db_cursor.execute(
             'SELECT * FROM \"DC_List\" WHERE '
-            'not_important_id = ? and '
+            'not_important_id = ? AND '
             'chat_id = ?',
             (not_important_id, chat_id)
         )
