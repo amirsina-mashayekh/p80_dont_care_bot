@@ -1,5 +1,12 @@
 #!/usr/bin/python3
-# Create module "bot_secrets" and put token of your bot in a variable named "token"
+
+# To test bot locally:
+# - Create a new module (e.g. local_start.py)
+# - Import main
+# - Define BOT_TOKEN, OWNER_ID and DATABASE_URL environment variables as strings (os.environ['key'] = 'val')
+# - Call main.main()
+# - Run that module
+
 import logging
 import os
 
