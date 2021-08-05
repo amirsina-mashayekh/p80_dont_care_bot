@@ -1,6 +1,6 @@
 __pycache__/
 .venv/
 .venvsource
-bot_secrets.py
+local_start.py
 Log.log
 data.db

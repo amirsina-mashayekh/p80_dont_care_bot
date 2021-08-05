@@ -28,7 +28,8 @@ def main() -> None:
         logging.info('Exiting bot...')
         return
 
-    updater = Updater(token=os.environ.get('BOT_TOKEN'))
+    bot_token = os.environ.get('BOT_TOKEN')
+    updater = Updater(token=bot_token)
     dispatcher = updater.dispatcher
 
     txt_not_cmd = Filters.text & ~Filters.command

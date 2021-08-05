@@ -2,11 +2,12 @@ import logging
 import os
 
 import psycopg2
+from psycopg2 import extensions
 from typing import Optional
 
 import doesntCare
 
-db = None
+db: psycopg2.extensions.connection
 
 
 def connect() -> bool:
