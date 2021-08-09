@@ -76,7 +76,7 @@ def main() -> None:
     dispatcher.add_handler(MessageHandler(filters=Filters.all, callback=handlers.message))
 
     try:
-        updater.start_polling()
+        updater.start_webhook(listen='0.0.0.0', port=int(os.environ.get('PORT', 5000)), url_path=bot_token, webhook_url='https://p80-dont-care-bot.herokuapp.com/' + bot_token)
     except telegram.error.TelegramError:
         logging.exception('Unable to start bot')
         logging.info('Exiting bot...')
