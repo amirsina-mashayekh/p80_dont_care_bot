@@ -40,6 +40,7 @@ def main() -> None:
     dispatcher = updater.dispatcher
 
     txt_not_cmd = Filters.text & ~Filters.command
+    msg_filter = Filters.all & ~(Filters.game | Filters.poll | Filters.status_update)
 
     add_conv_handler = ConversationHandler(
         entry_points=[CommandHandler(command='add', callback=handlers.add)],
@@ -73,7 +74,7 @@ def main() -> None:
     dispatcher.add_handler(add_conv_handler)
     dispatcher.add_handler(rem_conv_handler)
     dispatcher.add_handler(rem_all_conv_handler)
-    dispatcher.add_handler(MessageHandler(filters=Filters.all, callback=handlers.message))
+    dispatcher.add_handler(MessageHandler(filters=msg_filter, callback=handlers.message))
 
     try:
         if os.environ.get('DATABASE_URL').__contains__('localhost'):

@@ -1,6 +1,5 @@
 import datetime
 import logging
-import os
 import re
 import psycopg2
 from typing import Optional
